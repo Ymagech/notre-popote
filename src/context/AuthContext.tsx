@@ -55,8 +55,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       setError(null);
       await signInWithPopup(auth, googleProvider);
-    } catch (err: any) {
-      setError(err.message || "Erreur lors de la connexion");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Erreur lors de la connexion");
+      }
     }
   };
 
@@ -64,8 +68,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       await signOut(auth);
       setUser(null);
-    } catch (err: any) {
-      setError(err.message || "Erreur lors de la déconnexion");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Erreur lors de la déconnexion");
+      }
     }
   };
 

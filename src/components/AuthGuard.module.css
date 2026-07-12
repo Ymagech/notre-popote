@@ -1,47 +1,112 @@
 .loading {
   display: flex;
-  justify-content: center;
   align-items: center;
-  height: 100vh;
+  justify-content: center;
+  min-height: 100vh;
   font-size: 1.2rem;
-  color: var(--color-text-muted);
+  color: var(--color-text-light);
+  background-color: var(--color-bg);
 }
 
 .loginContainer {
   display: flex;
-  justify-content: center;
+  min-height: 100vh;
+  background-color: var(--color-bg);
+}
+
+.imagePanel {
+  flex: 1;
+  position: relative;
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .imagePanel {
+    display: block;
+  }
+}
+
+.imageOverlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 4rem;
+  background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.imageOverlay h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+.imageOverlay p {
+  font-size: 1.2rem;
+  opacity: 0.9;
+  max-width: 400px;
+}
+
+.formPanel {
+  flex: 1;
+  display: flex;
   align-items: center;
-  height: 100vh;
-  background-color: var(--color-background);
+  justify-content: center;
+  padding: 2rem;
+  background-color: var(--color-bg);
 }
 
 .loginBox {
-  background: var(--color-surface);
+  background-color: var(--color-card);
   padding: 3rem;
   border-radius: var(--radius-lg);
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  text-align: center;
-  max-width: 400px;
+  box-shadow: var(--shadow-lg);
+  max-width: 450px;
   width: 100%;
+  text-align: center;
 }
 
-.loginBox h1 {
-  color: var(--color-primary);
+.icon {
+  font-size: 4rem;
   margin-bottom: 1rem;
 }
 
-.loginBox p {
-  color: var(--color-text-muted);
+.loginBox h2 {
+  font-size: 2rem;
+  color: var(--color-primary);
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  color: var(--color-text-light);
   margin-bottom: 2rem;
+  line-height: 1.5;
 }
 
 .error {
-  color: var(--color-danger);
-  background-color: #fef2f2;
+  background-color: #fee2e2;
+  color: #dc2626;
   padding: 1rem;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   margin-bottom: 1.5rem;
-  font-size: 0.875rem;
+  font-size: 0.9rem;
+  text-align: left;
+}
+
+.helpText {
+  margin-top: 2rem;
+  font-size: 0.8rem;
+  color: var(--color-text-light);
+  text-align: left;
+  background-color: var(--color-bg-alt);
+  padding: 1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
 }
 
 .loginButton {

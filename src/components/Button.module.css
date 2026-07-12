@@ -43,3 +43,7 @@
 .danger:hover {
   background-color: #fef2f2;
 }
+
+.fullWidth {
+  width: 100%;
+}
