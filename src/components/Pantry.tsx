@@ -2,25 +2,25 @@
 
 import React, { useEffect, useState } from 'react';
 import styles from './Pantry.module.css';
-import { PantryItem, fetchPantryItems, updatePantryItem, getPantryStatus } from '@/lib/pantryService';
+import { getPantryItems, updatePantryItem } from '@/lib/pantryService';
+import { PantryItem } from '@/types';
 import Button from './Button';
+import PantryItemModal from './PantryItemModal';
+import { addPantryItem } from '@/lib/pantryService';
 
 export default function Pantry() {
   const [items, setItems] = useState<PantryItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    const loadItems = async () => {
-      try {
-        const data = await fetchPantryItems();
-        setItems(data);
-      } catch (error) {
-        console.error("Erreur lors du chargement du garde-manger:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadItems();
+    getPantryItems().then(data => {
+      setItems(data);
+      setLoading(false);
+    }).catch(error => {
+      console.error("Erreur lors du chargement du garde-manger:", error);
+      setLoading(false);
+    });
   }, []);
 
   const handleUpdateQuantity = async (id: string, newQuantity: number) => {
@@ -34,7 +34,13 @@ export default function Pantry() {
     } catch (error) {
       console.error("Erreur lors de la mise à jour:", error);
       // Revert in real app, simple log for now
+      window.location.reload();
     }
+  };
+
+  const handleSavePantryItem = async (itemData: Omit<PantryItem, 'id' | 'createdAt'>) => {
+    await addPantryItem(itemData);
+    window.location.reload();
   };
 
   if (loading) return <div>Chargement du garde-manger...</div>;
@@ -46,40 +52,39 @@ export default function Pantry() {
           <h2 className={styles.title}>Garde-manger Familial</h2>
           <p className={styles.subtitle}>INGRÉDIENTS EN STOCK & ALERTES</p>
         </div>
-        <Button>+ Nouvel Article</Button>
+        <Button onClick={() => setIsModalOpen(true)}>+ Nouvel Article</Button>
       </div>
 
       <div className={styles.grid}>
         {items.map(item => {
-          const status = getPantryStatus(item.quantity, item.maxQuantity);
-          const percentage = Math.round((item.quantity / item.maxQuantity) * 100);
+          // Simple logic for status based on alertThreshold
+          const status = item.quantity <= item.alertThreshold ? 'À RACHETER' : 'EN STOCK';
+          const percentage = item.alertThreshold > 0 ? Math.min(100, Math.round((item.quantity / (item.alertThreshold * 3)) * 100)) : 100;
           
           return (
             <div key={item.id} className={styles.card}>
               <div className={styles.cardHeader}>
                 <h3 className={styles.itemName}>{item.name}</h3>
-                <span className={`${styles.badge} ${styles[status.replace(' ', '')]}`}>
+                <span className={`${styles.badge} ${status === 'EN STOCK' ? styles.badgeSuccess : styles.badgeDanger}`}>
                   {status}
                 </span>
               </div>
               <div className={styles.amount}>
-                {item.quantity} / {item.maxQuantity} {item.unit}
+                {item.quantity} {item.unit} (Alerte: {item.alertThreshold})
               </div>
               
               <div className={styles.progressContainer}>
                 <div 
-                  className={`${styles.progressBar} ${styles['bar' + status.replace(' ', '')]}`}
-                  style={{ width: `${percentage}%` }}
+                  className={styles.progressBar}
+                  style={{ width: `${percentage}%`, backgroundColor: status === 'EN STOCK' ? 'var(--color-primary)' : 'var(--color-danger)' }}
                 ></div>
               </div>
               
               <div className={styles.actions}>
                 <div className={styles.quantityControls}>
                   <button onClick={() => handleUpdateQuantity(item.id!, item.quantity - 1)}>-</button>
-                  <span>{percentage}%</span>
                   <button onClick={() => handleUpdateQuantity(item.id!, item.quantity + 1)}>+</button>
                 </div>
-                <button className={styles.editButton}>Edit</button>
               </div>
             </div>
           );
@@ -88,6 +93,12 @@ export default function Pantry() {
           <p className={styles.empty}>Votre garde-manger est vide.</p>
         )}
       </div>
+
+      <PantryItemModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        onSave={handleSavePantryItem} 
+      />
     </div>
   );
 }
