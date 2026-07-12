@@ -1,0 +1,139 @@
+.tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid var(--color-border);
+}
+
+.tab {
+  padding: 0.75rem 1.25rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: all 0.2s;
+  background: none;
+  cursor: pointer;
+}
+
+.tab:hover {
+  color: var(--color-text);
+}
+
+.tabActive {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  background-color: var(--color-bg);
+  border-radius: var(--radius-md);
+  transition: background-color 0.15s;
+}
+
+.item:hover {
+  background-color: var(--color-bg-alt);
+}
+
+.itemName {
+  font-size: 0.95rem;
+  color: var(--color-text);
+}
+
+.itemActions {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.editBtn, .deleteBtn {
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  transition: background-color 0.15s;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.editBtn:hover {
+  background-color: var(--color-border);
+}
+
+.deleteBtn:hover {
+  background-color: #fecaca;
+}
+
+.editRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.editRow input {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-sm);
+  font-size: 0.95rem;
+  outline: none;
+}
+
+.saveBtn, .cancelBtn {
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.saveBtn {
+  color: var(--color-primary);
+}
+
+.saveBtn:hover {
+  background-color: #dcfce7;
+}
+
+.cancelBtn {
+  color: var(--color-danger);
+}
+
+.cancelBtn:hover {
+  background-color: #fecaca;
+}
+
+.addRow {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.addRow input {
+  flex: 1;
+  padding: 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: 0.95rem;
+  outline: none;
+}
+
+.addRow input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(21, 128, 61, 0.2);
+}

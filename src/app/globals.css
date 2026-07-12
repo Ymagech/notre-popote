@@ -1,20 +1,28 @@
 :root {
-  --color-primary: #15803d; /* Green like in the mockups */
+  --color-primary: #15803d;
   --color-primary-hover: #166534;
-  --color-secondary: #ea580c; /* Orange */
+  --color-secondary: #ea580c;
   --color-secondary-hover: #c2410c;
-  --color-background: #fdfbf7; /* Off-white/cream */
+  --color-background: #fdfbf7;
   --color-surface: #ffffff;
+  --color-card: #ffffff;
+  --color-bg: #f5f3f0;
+  --color-bg-alt: #f0ede8;
   --color-text: #1c1917;
+  --color-text-light: #78716c;
   --color-text-muted: #78716c;
   --color-border: #e7e5e4;
   --color-danger: #ef4444;
   --color-warning: #f59e0b;
-  
+
   --radius-sm: 0.25rem;
   --radius-md: 0.5rem;
   --radius-lg: 1rem;
   --radius-full: 9999px;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
 }
 
 * {
@@ -29,7 +37,7 @@ body {
   overflow-x: hidden;
   background-color: var(--color-background);
   color: var(--color-text);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
 }
 
 a {
@@ -50,5 +58,12 @@ button {
 
 .main-content {
   flex: 1;
-  margin-left: 280px; /* Width of sidebar */
+  margin-left: 280px;
+  min-height: 100vh;
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0;
+  }
 }

@@ -4,18 +4,27 @@ export interface Ingredient {
   unit: string;
 }
 
+export interface NutritionalValues {
+  calories?: number;  // kcal par portion
+  proteins?: number;  // g
+  carbs?: number;     // g
+  fats?: number;      // g
+}
+
 export interface Recipe {
   id?: string;
   title: string;
   description: string;
-  prepTime: number; // en minutes
-  cookTime: number; // en minutes
+  prepTime: number;
+  cookTime: number;
   origin: string;
-  category: 'Déjeuner' | 'Dîner' | 'Souper' | 'Dessert' | 'Autre';
+  category: string;
+  servings: number;
   ingredients: Ingredient[];
   instructions: string[];
+  nutritionalValues?: NutritionalValues;
   imageUrl?: string;
-  createdAt?: unknown; // Firestore Timestamp
+  createdAt?: unknown;
 }
 
 export interface PantryItem {
@@ -23,7 +32,12 @@ export interface PantryItem {
   name: string;
   quantity: number;
   unit: string;
-  category: 'Épicerie' | 'Frais' | 'Surgelés' | 'Boissons' | 'Autre';
-  alertThreshold: number; // Niveau d'alerte pour liste de courses
+  category: string;
+  alertThreshold: number;
   createdAt?: unknown;
+}
+
+export interface AppSettings {
+  mealCategories: string[];
+  originCategories: string[];
 }

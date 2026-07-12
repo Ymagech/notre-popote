@@ -4,16 +4,17 @@ import React, { useEffect, useState } from "react";
 import styles from "./page.module.css";
 import Pantry from "@/components/Pantry";
 import Button from "@/components/Button";
-import RecipeModal from "@/components/RecipeModal";
 import { Recipe } from "@/types";
-import { getRecipes, addRecipe } from "@/lib/recipeService";
+import { getRecipes } from "@/lib/recipeService";
 import { seedDatabase } from "@/lib/seedData";
+import { useFilters } from "@/context/FilterContext";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Home() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
-  const [isRecipeModalOpen, setIsRecipeModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const { activeCategory, activeOrigin, searchQuery, setSearchQuery } = useFilters();
 
   useEffect(() => {
     getRecipes().then(data => {
@@ -25,71 +26,100 @@ export default function Home() {
     });
   }, []);
 
-  const handleSaveRecipe = async (recipeData: Omit<Recipe, 'id' | 'createdAt'>) => {
-    await addRecipe(recipeData);
-    // Reload is handled optimistically or let's just ignore for this prototype, or reload the page
-    window.location.reload();
-  };
-
   const handleSeed = async () => {
     if (confirm("Voulez-vous injecter les données de démonstration (4 recettes, 4 articles) ?")) {
       await seedDatabase();
-      alert("Données injectées avec succès ! Rechargez la page.");
       window.location.reload();
     }
   };
+
+  // Apply filters
+  const filteredRecipes = recipes.filter(recipe => {
+    if (activeCategory && recipe.category !== activeCategory) return false;
+    if (activeOrigin && recipe.origin !== activeOrigin) return false;
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      const matchTitle = recipe.title.toLowerCase().includes(q);
+      const matchDesc = recipe.description.toLowerCase().includes(q);
+      const matchOrigin = recipe.origin.toLowerCase().includes(q);
+      const matchIngredient = recipe.ingredients?.some(i => i.name.toLowerCase().includes(q));
+      if (!matchTitle && !matchDesc && !matchOrigin && !matchIngredient) return false;
+    }
+    return true;
+  });
+
+  const activeFilterLabel = activeCategory || activeOrigin || null;
 
   return (
     <div className={styles.page}>
       <header className={styles.topbar}>
         <div className={styles.searchBar}>
-          <input type="text" placeholder="Rechercher par titre, ingrédient ou pays..." />
+          <input
+            type="text"
+            placeholder="Rechercher par titre, ingrédient ou pays..."
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+          />
         </div>
-        <div style={{ display: 'flex', gap: '1rem' }}>
+        <div className={styles.topbarActions}>
           {recipes.length === 0 && (
-            <Button variant="outline" onClick={handleSeed}>Bouton Magique (Seed)</Button>
+            <Button variant="outline" onClick={handleSeed}>🪄 Données démo</Button>
           )}
-          <Button onClick={() => setIsRecipeModalOpen(true)}>+ Nouvelle Recette</Button>
+          <Link href="/recipe/new">
+            <Button>+ Nouvelle Recette</Button>
+          </Link>
         </div>
       </header>
 
       <main className={styles.main}>
-        <section className={styles.recipeSection}>
-          <h2 style={{ marginBottom: '1.5rem', color: 'var(--color-primary)' }}>Vos Recettes</h2>
-          
+        <section>
+          <div className={styles.sectionHeader}>
+            <h2 className={styles.sectionTitle}>
+              {activeFilterLabel ? `Recettes — ${activeFilterLabel}` : 'Vos Recettes'}
+            </h2>
+            <span className={styles.recipeCount}>{filteredRecipes.length} recette{filteredRecipes.length > 1 ? 's' : ''}</span>
+          </div>
+
           {loading ? (
-            <p>Chargement des recettes...</p>
-          ) : recipes.length === 0 ? (
-            <p>Aucune recette pour le moment. Cliquez sur &quot;Bouton Magique&quot; pour en générer ou créez-en une nouvelle !</p>
+            <p className={styles.emptyState}>Chargement des recettes...</p>
+          ) : filteredRecipes.length === 0 ? (
+            <p className={styles.emptyState}>
+              {recipes.length === 0
+                ? 'Aucune recette pour le moment. Cliquez sur « 🪄 Données démo » pour commencer !'
+                : 'Aucune recette ne correspond à vos filtres.'}
+            </p>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '2rem', marginBottom: '3rem' }}>
-              {recipes.map(recipe => (
-                <div key={recipe.id} style={{ backgroundColor: 'var(--color-card)', borderRadius: 'var(--radius-lg)', overflow: 'hidden', boxShadow: 'var(--shadow-md)' }}>
-                  {recipe.imageUrl ? (
-                    <div style={{ position: 'relative', height: '200px' }}>
-                      <Image src={recipe.imageUrl} alt={recipe.title} fill style={{ objectFit: 'cover' }} />
+            <div className={styles.recipeGrid}>
+              {filteredRecipes.map(recipe => (
+                <Link href={`/recipe/${recipe.id}`} key={recipe.id} className={styles.recipeCard}>
+                  <div className={styles.recipeImageWrapper}>
+                    {recipe.imageUrl ? (
+                      <Image
+                        src={recipe.imageUrl}
+                        alt={recipe.title}
+                        fill
+                        style={{ objectFit: 'cover' }}
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                      />
+                    ) : (
+                      <div className={styles.recipeImagePlaceholder}>
+                        <span>🍲</span>
+                      </div>
+                    )}
+                  </div>
+                  <div className={styles.recipeCardBody}>
+                    <div className={styles.recipeCardHeader}>
+                      <h3 className={styles.recipeTitle}>{recipe.title}</h3>
+                      <span className={styles.recipeBadge}>{recipe.category}</span>
                     </div>
-                  ) : (
-                    <div style={{ height: '200px', backgroundColor: 'var(--color-bg-alt)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <span style={{ fontSize: '3rem' }}>🍲</span>
-                    </div>
-                  )}
-                  <div style={{ padding: '1.5rem' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
-                      <h3 style={{ fontSize: '1.25rem', fontWeight: 600, color: 'var(--color-text)' }}>{recipe.title}</h3>
-                      <span style={{ backgroundColor: 'var(--color-bg)', padding: '0.25rem 0.5rem', borderRadius: 'var(--radius-sm)', fontSize: '0.75rem', color: 'var(--color-text-light)' }}>
-                        {recipe.category}
-                      </span>
-                    </div>
-                    <p style={{ color: 'var(--color-text-light)', fontSize: '0.875rem', marginBottom: '1rem', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                      {recipe.description}
-                    </p>
-                    <div style={{ display: 'flex', gap: '1rem', fontSize: '0.875rem', color: 'var(--color-text-light)' }}>
+                    <p className={styles.recipeDescription}>{recipe.description}</p>
+                    <div className={styles.recipeMeta}>
                       <span>⏱️ {recipe.prepTime + recipe.cookTime} min</span>
                       <span>🌍 {recipe.origin}</span>
+                      {recipe.servings && <span>👥 {recipe.servings} pers.</span>}
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           )}
@@ -97,12 +127,6 @@ export default function Home() {
 
         <Pantry />
       </main>
-
-      <RecipeModal 
-        isOpen={isRecipeModalOpen} 
-        onClose={() => setIsRecipeModalOpen(false)} 
-        onSave={handleSaveRecipe} 
-      />
     </div>
   );
 }

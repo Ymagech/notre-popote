@@ -4,7 +4,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -13,9 +13,10 @@
 }
 
 .modal, .modalLarge {
-  background-color: var(--color-card);
+  background-color: #ffffff;
   padding: 2rem;
   border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
   box-shadow: var(--shadow-lg);
   width: 100%;
   max-width: 500px;
@@ -27,14 +28,10 @@
   max-width: 700px;
 }
 
-.modal h2 {
+.modal h2, .modalLarge h2 {
   margin-bottom: 1.5rem;
   color: var(--color-primary);
-}
-
-.modalLarge h2 {
-  margin-bottom: 1.5rem;
-  color: var(--color-primary);
+  font-size: 1.5rem;
 }
 
 .formGroup {
@@ -56,12 +53,14 @@
   border-radius: var(--radius-md);
   font-family: inherit;
   font-size: 1rem;
+  background-color: #ffffff;
+  color: var(--color-text);
 }
 
 .formGroup input:focus, .formGroup select:focus, .formGroup textarea:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+  box-shadow: 0 0 0 2px rgba(21, 128, 61, 0.2);
 }
 
 .row {

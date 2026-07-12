@@ -50,7 +50,28 @@
   color: var(--color-text-muted);
   letter-spacing: 0.05em;
   text-transform: uppercase;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin-bottom: 1rem;
+}
+
+.settingsBtn {
+  padding: 0.25rem;
+  font-size: 1rem;
+  border-radius: var(--radius-sm);
+  transition: background-color 0.15s;
+  line-height: 1;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.settingsBtn:hover {
+  background-color: var(--color-bg-alt);
 }
 
 .syncCard {
