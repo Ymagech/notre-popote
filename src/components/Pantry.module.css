@@ -1,0 +1,158 @@
+.container {
+  margin-top: 2rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.title {
+  color: var(--color-text);
+  font-size: 1.5rem;
+}
+
+.subtitle {
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 0.25rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
+}
+
+.itemName {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.badge {
+  font-size: 0.7rem;
+  font-weight: bold;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-full);
+}
+
+.ENSTOCK {
+  background-color: #dcfce7;
+  color: var(--color-primary);
+}
+
+.BAS {
+  background-color: #fef3c7;
+  color: var(--color-warning);
+}
+
+.ÉPUISÉ {
+  background-color: #fee2e2;
+  color: var(--color-danger);
+}
+
+.amount {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  margin-bottom: 1rem;
+}
+
+.progressContainer {
+  height: 6px;
+  background-color: var(--color-border);
+  border-radius: var(--radius-full);
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+}
+
+.progressBar {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width 0.3s ease;
+}
+
+.barENSTOCK {
+  background-color: var(--color-primary);
+}
+
+.barBAS {
+  background-color: var(--color-warning);
+}
+
+.barÉPUISÉ {
+  background-color: var(--color-danger);
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.quantityControls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--color-background);
+  padding: 0.25rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+}
+
+.quantityControls button {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+}
+
+.quantityControls button:hover {
+  background-color: var(--color-border);
+}
+
+.quantityControls span {
+  font-size: 0.75rem;
+  font-weight: bold;
+  min-width: 2rem;
+  text-align: center;
+}
+
+.editButton {
+  padding: 0.5rem;
+  color: var(--color-secondary);
+  border-radius: var(--radius-md);
+  background-color: #fff7ed;
+  font-size: 0.875rem;
+  font-weight: bold;
+}
+
+.editButton:hover {
+  background-color: #ffedd5;
+}
+
+.empty {
+  color: var(--color-text-muted);
+  font-style: italic;
+  grid-column: 1 / -1;
+}

@@ -1,11 +1,55 @@
 .page {
   display: flex;
+  flex-direction: column;
   min-height: 100vh;
   padding: 2rem;
+  background-color: var(--color-background);
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.searchBar {
+  flex: 1;
+  max-width: 600px;
+}
+
+.searchBar input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-surface);
+  font-size: 1rem;
+  outline: none;
+}
+
+.searchBar input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(21, 128, 61, 0.2);
+}
+
+.newRecipeBtn {
+  background-color: var(--color-primary);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-full);
+  font-weight: bold;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+}
+
+.newRecipeBtn:hover {
+  background-color: var(--color-primary-hover);
 }
 
 .main {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 2rem;
 }
+
