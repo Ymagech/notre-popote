@@ -67,9 +67,6 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
               Connexion avec Google
             </Button>
 
-            <div className={styles.helpText}>
-              <p><strong>Note technique :</strong> Si vous obtenez l&apos;erreur <code>auth/configuration-not-found</code>, cela signifie que vous devez activer le fournisseur de connexion <strong>Google</strong> dans la console Firebase (Authentication &gt; Sign-in method), et ajouter votre domaine actuel dans &quot;Authorized domains&quot; (Authentication &gt; Settings &gt; Authorized domains).</p>
-            </div>
           </div>
         </div>
       </div>
