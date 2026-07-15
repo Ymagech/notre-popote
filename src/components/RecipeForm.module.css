@@ -266,3 +266,60 @@
   gap: 1rem;
   padding-top: 1rem;
 }
+
+@media (max-width: 768px) {
+  .formPage {
+    padding: 1rem;
+  }
+  
+  .formRow {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .ingredientRow {
+    flex-wrap: wrap;
+    background-color: var(--color-bg);
+    padding: 0.75rem;
+    border-radius: var(--radius-md);
+    gap: 0.75rem 0.5rem;
+  }
+  
+  .ingredientName {
+    flex: 1 1 100%;
+  }
+  
+  .ingredientQty {
+    flex: 1;
+    min-width: 0;
+  }
+  
+  .ingredientUnit {
+    flex: 2;
+    min-width: 0;
+  }
+  
+  .removeBtn {
+    align-self: center;
+  }
+  
+  .nutritionGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .submitBar {
+    flex-direction: column-reverse;
+    gap: 0.75rem;
+  }
+  
+  .submitBar > a {
+    width: 100%;
+    display: flex;
+  }
+  
+  .submitBar button {
+    width: 100%;
+    justify-content: center;
+  }
+}

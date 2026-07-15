@@ -16,6 +16,7 @@ export default function Sidebar() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [categoryModalTab, setCategoryModalTab] = useState<'meal' | 'origin'>('meal');
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   const loadData = () => {
     getSettings().then(setSettings);
@@ -36,11 +37,24 @@ export default function Sidebar() {
   const openCategoryManager = (tab: 'meal' | 'origin') => {
     setCategoryModalTab(tab);
     setIsCategoryModalOpen(true);
+    setIsMobileOpen(false);
   };
 
   return (
     <>
-      <aside className={styles.sidebar}>
+      <button 
+        className={`${styles.mobileToggle} ${isMobileOpen ? styles.toggleOpen : ''}`}
+        onClick={() => setIsMobileOpen(!isMobileOpen)}
+        aria-label="Menu"
+      >
+        {isMobileOpen ? '✕' : '☰'}
+      </button>
+
+      {isMobileOpen && (
+        <div className={styles.backdrop} onClick={() => setIsMobileOpen(false)} />
+      )}
+
+      <aside className={`${styles.sidebar} ${isMobileOpen ? styles.open : ''}`}>
         <div className={styles.header}>
           <div className={styles.avatar}>
             {user?.displayName ? user.displayName.charAt(0).toUpperCase() : 'P'}
@@ -59,7 +73,7 @@ export default function Sidebar() {
             <p className={styles.syncText}>
               Connecté en tant que <strong>{user?.email}</strong>. Vos données sont synchronisées avec Firebase.
             </p>
-            <button onClick={logOut} className={styles.logoutButton}>
+            <button onClick={() => { logOut(); setIsMobileOpen(false); }} className={styles.logoutButton}>
               Déconnexion
             </button>
           </div>
@@ -73,7 +87,7 @@ export default function Sidebar() {
           <ul className={styles.navList}>
             <li
               className={`${styles.navItem} ${activeCategory === null && activeOrigin === null ? styles.active : ''}`}
-              onClick={() => { clearFilters(); }}
+              onClick={() => { clearFilters(); setIsMobileOpen(false); }}
             >
               <span>Toutes les catégories</span>
               <span className={styles.badge}>{recipes.length}</span>
@@ -85,6 +99,7 @@ export default function Sidebar() {
                 onClick={() => {
                   setActiveOrigin(null);
                   setActiveCategory(activeCategory === cat ? null : cat);
+                  setIsMobileOpen(false);
                 }}
               >
                 <span>{cat}</span>
@@ -102,7 +117,7 @@ export default function Sidebar() {
           <ul className={styles.navList}>
             <li
               className={`${styles.navItem} ${activeOrigin === null && activeCategory === null ? styles.active : ''}`}
-              onClick={() => { clearFilters(); }}
+              onClick={() => { clearFilters(); setIsMobileOpen(false); }}
             >
               <span>Toutes les cuisines</span>
               <span className={styles.badge}>{recipes.length}</span>
@@ -114,6 +129,7 @@ export default function Sidebar() {
                 onClick={() => {
                   setActiveCategory(null);
                   setActiveOrigin(activeOrigin === origin ? null : origin);
+                  setIsMobileOpen(false);
                 }}
               >
                 <span>{origin}</span>

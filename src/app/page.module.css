@@ -158,3 +158,43 @@
   font-size: 0.8rem;
   color: var(--color-text-muted);
 }
+
+@media (max-width: 768px) {
+  .page {
+    padding: 1rem;
+  }
+  
+  .topbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .topbarActions {
+    width: 100%;
+    gap: 0.5rem;
+  }
+  
+  .topbarActions > a,
+  .topbarActions > button {
+    flex: 1;
+    display: flex;
+  }
+  
+  .topbarActions button {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .recipeGrid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  
+  .sectionHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+}
