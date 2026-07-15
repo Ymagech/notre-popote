@@ -99,7 +99,7 @@ export default function Home() {
                         alt={recipe.title}
                         fill
                         style={{ objectFit: 'cover' }}
-                        sizes="(max-width: 768px) 100vw, 33vw"
+                        sizes="(max-width: 1024px) 100vw, 33vw"
                       />
                     ) : (
                       <div className={styles.recipeImagePlaceholder}>
