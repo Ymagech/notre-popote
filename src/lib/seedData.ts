@@ -1,6 +1,30 @@
 import { addRecipe } from './recipeService';
-import { addPantryItem } from './pantryService';
+import { getPantryItems, deletePantryItem } from './pantryService';
 import { getSettings } from './settingsService';
+import { findOrCreateArticleByName } from './articleService';
+
+const BASIC_ARTICLES = [
+  { name: "Pâtes", defaultUnit: "g", category: "Épicerie" },
+  { name: "Riz", defaultUnit: "g", category: "Épicerie" },
+  { name: "Farine", defaultUnit: "g", category: "Épicerie" },
+  { name: "Sucre", defaultUnit: "g", category: "Épicerie" },
+  { name: "Sel", defaultUnit: "g", category: "Épicerie" },
+  { name: "Poivre", defaultUnit: "pincée", category: "Épicerie" },
+  { name: "Huile d'olive", defaultUnit: "ml", category: "Épicerie" },
+  { name: "Beurre", defaultUnit: "g", category: "Frais" },
+  { name: "Lait", defaultUnit: "L", category: "Frais" },
+  { name: "Oeufs", defaultUnit: "pièce", category: "Frais" },
+  { name: "Blanc de poulet", defaultUnit: "pièce", category: "Frais" },
+  { name: "Steak haché", defaultUnit: "pièce", category: "Frais" },
+  { name: "Tomates", defaultUnit: "pièce", category: "Frais" },
+  { name: "Oignons", defaultUnit: "pièce", category: "Frais" },
+  { name: "Ail", defaultUnit: "gousse", category: "Frais" },
+  { name: "Pommes de terre", defaultUnit: "kg", category: "Frais" },
+  { name: "Carottes", defaultUnit: "pièce", category: "Frais" },
+  { name: "Pain", defaultUnit: "pièce", category: "Épicerie" },
+  { name: "Fromage râpé", defaultUnit: "g", category: "Frais" },
+  { name: "Crème fraîche", defaultUnit: "g", category: "Frais" }
+];
 
 export const seedDatabase = async () => {
   // Ensure settings are initialized
@@ -108,22 +132,35 @@ export const seedDatabase = async () => {
     }
   ];
 
-  const pantryItems = [
-    { name: "Farine de blé", quantity: 1, unit: "kg", category: "Épicerie", alertThreshold: 0.5 },
-    { name: "Oeufs", quantity: 12, unit: "pièce", category: "Frais", alertThreshold: 4 },
-    { name: "Lait demi-écrémé", quantity: 2, unit: "L", category: "Frais", alertThreshold: 1 },
-    { name: "Huile d'olive", quantity: 1, unit: "L", category: "Épicerie", alertThreshold: 0.2 }
-  ];
-
-  console.log("Seeding database...");
+  console.log("Seeding database (recipes and basic articles)...");
   
   for (const recipe of recipes) {
     await addRecipe(recipe);
   }
-  
-  for (const item of pantryItems) {
-    await addPantryItem(item);
+
+  for (const art of BASIC_ARTICLES) {
+    await findOrCreateArticleByName(art.name, art.defaultUnit, art.category);
   }
   
   console.log("Database seeded successfully!");
+};
+
+export const autoCleanStaticPantryItems = async () => {
+  console.log("Running auto clean of static pantry items and seeding basic articles...");
+  try {
+    const pantryItems = await getPantryItems();
+    const itemsToDelete = ["Huile d'olive", "Lait demi-écrémé", "Oeufs", "Farine de blé"];
+    for (const item of pantryItems) {
+      if (itemsToDelete.includes(item.name)) {
+        await deletePantryItem(item.id!);
+      }
+    }
+
+    for (const art of BASIC_ARTICLES) {
+      await findOrCreateArticleByName(art.name, art.defaultUnit, art.category);
+    }
+    console.log("Auto clean and seed finished successfully.");
+  } catch (error) {
+    console.error("Error during autoCleanStaticPantryItems:", error);
+  }
 };

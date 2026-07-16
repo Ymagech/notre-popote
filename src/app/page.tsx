@@ -24,6 +24,21 @@ export default function Home() {
       console.error("Erreur lors du chargement des recettes:", error);
       setLoading(false);
     });
+
+    const checkAndClean = async () => {
+      const isCleaned = localStorage.getItem('pantry_cleaned_20260716');
+      if (!isCleaned) {
+        try {
+          const { autoCleanStaticPantryItems } = await import('@/lib/seedData');
+          await autoCleanStaticPantryItems();
+          localStorage.setItem('pantry_cleaned_20260716', 'true');
+          window.location.reload();
+        } catch (err) {
+          console.error("Error cleaning/seeding:", err);
+        }
+      }
+    };
+    checkAndClean();
   }, []);
 
   const handleSeed = async () => {

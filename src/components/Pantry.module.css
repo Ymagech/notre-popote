@@ -151,6 +151,25 @@
   background-color: #ffedd5;
 }
 
+.deleteButton {
+  padding: 0.35rem 0.5rem;
+  background-color: #fee2e2;
+  color: var(--color-danger);
+  border-radius: var(--radius-md);
+  border: 1px solid #fecaca;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.deleteButton:hover {
+  background-color: #fca5a5;
+  color: #7f1d1d;
+}
+
 .empty {
   color: var(--color-text-muted);
   font-style: italic;

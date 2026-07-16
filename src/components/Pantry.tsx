@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styles from './Pantry.module.css';
-import { getPantryItems, updatePantryItem, addPantryItem } from '@/lib/pantryService';
+import { getPantryItems, updatePantryItem, addPantryItem, deletePantryItem } from '@/lib/pantryService';
 import { PantryItem, Article } from '@/types';
 import Button from './Button';
 import PantryItemModal from './PantryItemModal';
@@ -55,6 +55,17 @@ export default function Pantry() {
     await loadData();
   };
 
+  const handleDeletePantryItem = async (id: string, name: string) => {
+    if (!confirm(`Voulez-vous retirer "${name}" du garde-manger ?`)) return;
+    setItems(items.filter(item => item.id !== id));
+    try {
+      await deletePantryItem(id);
+    } catch (error) {
+      console.error("Erreur lors de la suppression de l'article du garde-manger:", error);
+      loadData();
+    }
+  };
+
   if (loading) return <div>Chargement du garde-manger...</div>;
 
   return (
@@ -100,6 +111,13 @@ export default function Pantry() {
                   <button onClick={() => handleUpdateQuantity(item.id!, item.quantity - 1)}>-</button>
                   <button onClick={() => handleUpdateQuantity(item.id!, item.quantity + 1)}>+</button>
                 </div>
+                <button 
+                  className={styles.deleteButton} 
+                  onClick={() => handleDeletePantryItem(item.id!, item.name)}
+                  title="Retirer du stock"
+                >
+                  🗑️
+                </button>
               </div>
             </div>
           );
