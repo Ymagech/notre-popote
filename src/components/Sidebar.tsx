@@ -125,6 +125,12 @@ export default function Sidebar() {
               <span>📝 Liste de courses</span>
             </li>
             <li 
+              className={`${styles.navItem} ${pathname === '/pantry' ? styles.active : ''}`}
+              onClick={() => { router.push('/pantry'); setIsMobileOpen(false); }}
+            >
+              <span>🥫 Garde-manger Familial</span>
+            </li>
+            <li 
               className={`${styles.navItem} ${pathname === '/calendar' ? styles.active : ''}`}
               onClick={() => { router.push('/calendar'); setIsMobileOpen(false); }}
             >

@@ -1,26 +1,37 @@
-"use client";
-
 import React, { useEffect, useState } from 'react';
 import styles from './Pantry.module.css';
-import { getPantryItems, updatePantryItem } from '@/lib/pantryService';
-import { PantryItem } from '@/types';
+import { getPantryItems, updatePantryItem, addPantryItem } from '@/lib/pantryService';
+import { PantryItem, Article } from '@/types';
 import Button from './Button';
 import PantryItemModal from './PantryItemModal';
-import { addPantryItem } from '@/lib/pantryService';
+import ArticleManagerModal from './ArticleManagerModal';
+import { getArticles, findOrCreateArticleByName } from '@/lib/articleService';
 
 export default function Pantry() {
   const [items, setItems] = useState<PantryItem[]>([]);
+  const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isArticleModalOpen, setIsArticleModalOpen] = useState(false);
+
+  const loadData = async () => {
+    try {
+      const [pantryData, articlesData] = await Promise.all([
+        getPantryItems(),
+        getArticles()
+      ]);
+      setItems(pantryData);
+      setArticles(articlesData);
+    } catch (error) {
+      console.error("Erreur lors du chargement du garde-manger/articles:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    getPantryItems().then(data => {
-      setItems(data);
-      setLoading(false);
-    }).catch(error => {
-      console.error("Erreur lors du chargement du garde-manger:", error);
-      setLoading(false);
-    });
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    loadData();
   }, []);
 
   const handleUpdateQuantity = async (id: string, newQuantity: number) => {
@@ -39,8 +50,9 @@ export default function Pantry() {
   };
 
   const handleSavePantryItem = async (itemData: Omit<PantryItem, 'id' | 'createdAt'>) => {
+    await findOrCreateArticleByName(itemData.name, itemData.unit, itemData.category);
     await addPantryItem(itemData);
-    window.location.reload();
+    await loadData();
   };
 
   if (loading) return <div>Chargement du garde-manger...</div>;
@@ -52,7 +64,10 @@ export default function Pantry() {
           <h2 className={styles.title}>Garde-manger Familial</h2>
           <p className={styles.subtitle}>INGRÉDIENTS EN STOCK & ALERTES</p>
         </div>
-        <Button onClick={() => setIsModalOpen(true)}>+ Nouvel Article</Button>
+        <div style={{ display: 'flex', gap: '0.75rem' }}>
+          <Button variant="outline" onClick={() => setIsArticleModalOpen(true)}>Gérer les articles 📦</Button>
+          <Button onClick={() => setIsModalOpen(true)}>+ Nouvel Article</Button>
+        </div>
       </div>
 
       <div className={styles.grid}>
@@ -98,6 +113,13 @@ export default function Pantry() {
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
         onSave={handleSavePantryItem} 
+        articles={articles}
+      />
+
+      <ArticleManagerModal
+        isOpen={isArticleModalOpen}
+        onClose={() => setIsArticleModalOpen(false)}
+        onArticlesChanged={loadData}
       />
     </div>
   );

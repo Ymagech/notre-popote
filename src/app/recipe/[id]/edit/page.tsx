@@ -7,11 +7,14 @@ import { db } from '@/lib/firebase';
 import { updateRecipe } from '@/lib/recipeService';
 import { uploadRecipeImage, deleteRecipeImage } from '@/lib/storageService';
 import { getSettings } from '@/lib/settingsService';
-import { Recipe, Ingredient, AppSettings } from '@/types';
+import { Recipe, Ingredient, AppSettings, Article } from '@/types';
 import Image from 'next/image';
 import Link from 'next/link';
 import Button from '@/components/Button';
 import styles from '@/components/RecipeForm.module.css';
+import { getArticles, findOrCreateArticleByName } from '@/lib/articleService';
+import ArticleAutocomplete from '@/components/ArticleAutocomplete';
+import ArticleManagerModal from '@/components/ArticleManagerModal';
 
 export default function EditRecipePage() {
   const params = useParams();
@@ -19,8 +22,10 @@ export default function EditRecipePage() {
   const id = params.id as string;
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [settings, setSettings] = useState<AppSettings>({ mealCategories: [], originCategories: [] });
+  const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [isArticleModalOpen, setIsArticleModalOpen] = useState(false);
 
   // Form state
   const [title, setTitle] = useState('');
@@ -41,13 +46,19 @@ export default function EditRecipePage() {
   const [carbs, setCarbs] = useState<number | ''>('');
   const [fats, setFats] = useState<number | ''>('');
 
+  const loadArticlesData = () => {
+    getArticles().then(setArticles);
+  };
+
   useEffect(() => {
     const loadData = async () => {
-      const [settingsData, docSnap] = await Promise.all([
+      const [settingsData, docSnap, articlesData] = await Promise.all([
         getSettings(),
         getDoc(doc(db, 'recipes', id)),
+        getArticles()
       ]);
       setSettings(settingsData);
+      setArticles(articlesData);
 
       if (docSnap.exists()) {
         const recipe = docSnap.data() as Recipe;
@@ -76,6 +87,10 @@ export default function EditRecipePage() {
   // Ingredients
   const addIngredient = () => setIngredients([...ingredients, { name: '', quantity: 0, unit: 'g' }]);
   const removeIngredient = (i: number) => setIngredients(ingredients.filter((_, idx) => idx !== i));
+  const handleSelectArticle = (index: number, article: { name: string; defaultUnit: string; category: string }) => {
+    updateIngredientField(index, 'name', article.name);
+    updateIngredientField(index, 'unit', article.defaultUnit);
+  };
   const updateIngredientField = (i: number, field: keyof Ingredient, value: string | number) => {
     const updated = [...ingredients];
     (updated[i] as unknown as Record<string, string | number>)[field] = value;
@@ -123,6 +138,11 @@ export default function EditRecipePage() {
 
     const filteredIngredients = ingredients.filter(ing => ing.name.trim() !== '');
     const filteredInstructions = instructions.filter(inst => inst.trim() !== '');
+
+    // Automatically register ingredients in the shared database
+    for (const ing of filteredIngredients) {
+      await findOrCreateArticleByName(ing.name.trim(), ing.unit, 'Autre');
+    }
 
     const updates: Partial<Recipe> = {
       title: title.trim(),
@@ -233,11 +253,24 @@ export default function EditRecipePage() {
 
         {/* Ingredients */}
         <div className={styles.section}>
-          <h2 className={styles.sectionTitle}>🧂 Ingrédients</h2>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+            <h2 className={styles.sectionTitle} style={{ marginBottom: 0 }}>🧂 Ingrédients</h2>
+            <Button type="button" variant="outline" size="sm" onClick={() => setIsArticleModalOpen(true)}>
+              Gérer les articles 📦
+            </Button>
+          </div>
           {ingredients.map((ing, i) => (
-            <div key={i} className={styles.ingredientRow}>
-              <input className={styles.ingredientName} type="text" placeholder="Ingrédient"
-                value={ing.name} onChange={e => updateIngredientField(i, 'name', e.target.value)} />
+            <div key={i} className={styles.ingredientRow} style={{ overflow: 'visible', zIndex: 100 - i, position: 'relative' }}>
+              <div style={{ flex: 2, position: 'relative' }}>
+                <ArticleAutocomplete
+                  value={ing.name}
+                  onChange={val => updateIngredientField(i, 'name', val)}
+                  onSelectArticle={art => handleSelectArticle(i, art)}
+                  articles={articles}
+                  required
+                  placeholder="Ingrédient"
+                />
+              </div>
               <input className={styles.ingredientQty} type="number" min="0" step="0.1" placeholder="Qté"
                 value={ing.quantity || ''} onChange={e => updateIngredientField(i, 'quantity', Number(e.target.value))} />
               <select className={styles.ingredientUnit} value={ing.unit} onChange={e => updateIngredientField(i, 'unit', e.target.value)}>
@@ -305,6 +338,12 @@ export default function EditRecipePage() {
           <Button type="submit" disabled={saving}>{saving ? 'Enregistrement...' : 'Enregistrer les modifications'}</Button>
         </div>
       </form>
+
+      <ArticleManagerModal
+        isOpen={isArticleModalOpen}
+        onClose={() => setIsArticleModalOpen(false)}
+        onArticlesChanged={loadArticlesData}
+      />
     </div>
   );
 }

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import styles from "./page.module.css";
-import Pantry from "@/components/Pantry";
+
 import Button from "@/components/Button";
 import { Recipe } from "@/types";
 import { getRecipes } from "@/lib/recipeService";
@@ -124,8 +124,6 @@ export default function Home() {
             </div>
           )}
         </section>
-
-        <Pantry />
       </main>
     </div>
   );

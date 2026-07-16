@@ -63,3 +63,11 @@ export interface CalendarEntry {
   servings?: number;
   createdAt?: unknown;
 }
+
+export interface Article {
+  id?: string;
+  name: string;
+  defaultUnit: string;
+  category: string;
+  createdAt?: unknown;
+}

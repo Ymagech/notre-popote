@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import styles from './page.module.css';
 import Button from '@/components/Button';
-import { ShoppingListItem } from '@/types';
+import { ShoppingListItem, Article } from '@/types';
 import { 
   getShoppingListItems, 
   updateShoppingListItem, 
@@ -11,10 +11,15 @@ import {
   clearShoppingList,
   addItemsToShoppingList
 } from '@/lib/shoppingListService';
+import { getArticles, findOrCreateArticleByName } from '@/lib/articleService';
+import ArticleAutocomplete from '@/components/ArticleAutocomplete';
+import ArticleManagerModal from '@/components/ArticleManagerModal';
 
 export default function ShoppingListPage() {
   const [items, setItems] = useState<ShoppingListItem[]>([]);
+  const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isArticleModalOpen, setIsArticleModalOpen] = useState(false);
   
   // Custom item inputs
   const [name, setName] = useState('');
@@ -33,10 +38,14 @@ export default function ShoppingListPage() {
 
   const loadItems = async () => {
     try {
-      const data = await getShoppingListItems();
+      const [data, articlesData] = await Promise.all([
+        getShoppingListItems(),
+        getArticles()
+      ]);
       setItems(data);
+      setArticles(articlesData);
     } catch (error) {
-      console.error('Erreur lors du chargement de la liste de courses:', error);
+      console.error('Erreur lors du chargement de la liste de courses/articles:', error);
     } finally {
       setLoading(false);
     }
@@ -95,11 +104,18 @@ export default function ShoppingListPage() {
     setTimeout(() => setToastMessage(null), 3000);
   };
 
+  const handleSelectArticle = (article: { name: string; defaultUnit: string; category: string }) => {
+    setName(article.name);
+    setUnit(article.defaultUnit);
+  };
+
   const handleAddItem = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return;
     
     try {
+      await findOrCreateArticleByName(name.trim(), unit.trim() || 'pièce', 'Autre');
+      
       await addItemsToShoppingList([{
         name: name.trim(),
         quantity: Number(quantity) || 1,
@@ -250,6 +266,9 @@ export default function ShoppingListPage() {
         </div>
         
         <div className={styles.headerActions}>
+          <Button variant="outline" onClick={() => setIsArticleModalOpen(true)}>
+            Gérer les articles 📦
+          </Button>
           <Button variant="outline" onClick={() => setShowBringSettings(!showBringSettings)}>
             {bringEmail ? '🦊 Bring! (Connecté)' : '🦊 Lier Bring!'}
           </Button>
@@ -322,15 +341,17 @@ export default function ShoppingListPage() {
       <main className={styles.mainGrid}>
         {/* Left column: Current List */}
         <section className={styles.listContainer}>
-          <form onSubmit={handleAddItem} className={styles.addItemForm}>
-            <input
-              type="text"
-              placeholder="Ajouter un article (ex: Bananes, Pâtes...)"
-              value={name}
-              onChange={e => setName(e.target.value)}
-              required
-              className={styles.itemNameInput}
-            />
+          <form onSubmit={handleAddItem} className={styles.addItemForm} style={{ overflow: 'visible' }}>
+            <div style={{ flex: 1, position: 'relative', zIndex: 10 }}>
+              <ArticleAutocomplete
+                value={name}
+                onChange={setName}
+                onSelectArticle={handleSelectArticle}
+                articles={articles}
+                required
+                placeholder="Ajouter un article (ex: Bananes, Pâtes...)"
+              />
+            </div>
             <input
               type="number"
               step="any"
@@ -433,6 +454,13 @@ export default function ShoppingListPage() {
           {toastMessage}
         </div>
       )}
+
+      {/* Article Manager Modal */}
+      <ArticleManagerModal
+        isOpen={isArticleModalOpen}
+        onClose={() => setIsArticleModalOpen(false)}
+        onArticlesChanged={loadItems}
+      />
     </div>
   );
 }
