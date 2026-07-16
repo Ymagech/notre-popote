@@ -23,6 +23,11 @@ export default function NewRecipePage() {
   const [loading, setLoading] = useState(false);
   const [isArticleModalOpen, setIsArticleModalOpen] = useState(false);
 
+  // Importer state
+  const [importedImageUrl, setImportedImageUrl] = useState('');
+  const [showImporter, setShowImporter] = useState(false);
+  const [importText, setImportText] = useState('');
+
   // Form state
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -51,7 +56,56 @@ export default function NewRecipePage() {
       if (s.originCategories.length > 0) setOrigin(s.originCategories[0]);
     });
     loadArticlesData();
+
+    // Check query params for Bookmarklet import
+    const searchParams = new URLSearchParams(window.location.search);
+    const importParam = searchParams.get('import');
+    if (importParam) {
+      try {
+        const data = JSON.parse(decodeURIComponent(importParam));
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        if (data.title) setTitle(data.title);
+        if (data.description) setDescription(data.description);
+        if (data.prepTime) setPrepTime(data.prepTime);
+        if (data.cookTime) setCookTime(data.cookTime);
+        if (data.servings) setServings(data.servings);
+        
+        if (data.ingredients && Array.isArray(data.ingredients)) {
+          const parsedIngredients = data.ingredients.map((ing: string | { name: string }) => {
+            const rawText = typeof ing === 'string' ? ing : ing.name;
+            return parseIngredientText(rawText);
+          });
+          setIngredients(parsedIngredients);
+        }
+        
+        if (data.instructions && Array.isArray(data.instructions)) {
+          setInstructions(data.instructions);
+        }
+        
+        if (data.imageUrl) {
+          setImagePreview(data.imageUrl);
+          setImportedImageUrl(data.imageUrl);
+        }
+      } catch (error) {
+        console.error('Erreur lors du décodage de l\'import:', error);
+      }
+    }
   }, []);
+
+  const handleTextImport = () => {
+    if (!importText.trim()) return;
+    const parsed = parseRecipeFromText(importText);
+    
+    if (parsed.title) setTitle(parsed.title);
+    if (parsed.ingredients.length > 0) setIngredients(parsed.ingredients);
+    if (parsed.instructions.length > 0) setInstructions(parsed.instructions);
+    setPrepTime(parsed.prepTime);
+    setCookTime(parsed.cookTime);
+    setServings(parsed.servings);
+    
+    setImportText('');
+    setShowImporter(false);
+  };
 
   // Ingredients
   const addIngredient = () => setIngredients([...ingredients, { name: '', quantity: 0, unit: 'g' }]);
@@ -112,6 +166,7 @@ export default function NewRecipePage() {
       await findOrCreateArticleByName(ing.name.trim(), ing.unit, 'Autre');
     }
 
+
     // 1. Create recipe first
     const recipeId = await addRecipe({
       title: title.trim(),
@@ -124,6 +179,7 @@ export default function NewRecipePage() {
       ingredients: filteredIngredients,
       instructions: filteredInstructions,
       nutritionalValues,
+      imageUrl: importedImageUrl || undefined
     });
 
     // 2. Upload image if selected
@@ -140,6 +196,54 @@ export default function NewRecipePage() {
     <div className={styles.formPage}>
       <Link href="/" className={styles.backLink}>← Retour aux recettes</Link>
       <h1 className={styles.pageTitle}>Nouvelle Recette</h1>
+
+      {/* Importer Section */}
+      <div className={styles.section} style={{ backgroundColor: '#f0fdf4', borderColor: '#bbf7d0', borderWidth: '1px', borderStyle: 'solid' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <h3 style={{ margin: 0, color: 'var(--color-primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            ✨ Importer une recette
+          </h3>
+          <Button type="button" variant="outline" size="sm" onClick={() => setShowImporter(!showImporter)}>
+            {showImporter ? 'Fermer' : "Ouvrir l'importateur"}
+          </Button>
+        </div>
+        
+        {showImporter && (
+          <div style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', lineHeight: '1.4' }}>
+              <strong style={{ color: 'var(--color-primary)' }}>Méthode 1 : Favori (Recommandé pour Cookidoo.ch)</strong><br />
+              1. Glissez ou enregistrez ce lien dans vos favoris : <a 
+                href="javascript:(function(){let recipe=null;document.querySelectorAll('script[type=%22application/ld%2Bjson%22]').forEach(script=>{try{const data=JSON.parse(script.innerText);const findRecipe=(obj)=>{if(!obj)return null;if(obj['@type']==='Recipe')return obj;if(Array.isArray(obj)){for(let item of obj){const r=findRecipe(item);if(r)return r;}}if(typeof obj==='object'){if(obj['@graph'])return findRecipe(obj['@graph']);for(let k in obj){const r=findRecipe(obj[k]);if(r)return r;}}return null;};const r=findRecipe(data);if(r)recipe=r;}catch(e){}});if(!recipe){alert(%22Aucune recette structur%C3%A9e trouv%C3%A9e sur cette page.%22);return;}const parseDuration=(iso)=>{if(!iso)return 0;const match=iso.match(/PT(?:(\\d+)H)?(?:(\\d+)M)?/);if(!match)return 0;const hours=parseInt(match[1])||0;const minutes=parseInt(match[2])||0;return hours*60%2Bminutes;};let servings=4;if(recipe.recipeYield){const yieldStr=Array.isArray(recipe.recipeYield)?recipe.recipeYield[0]:String(recipe.recipeYield);const match=yieldStr.match(/\\d%2B/);if(match)servings=parseInt(match[0]);}const ingredients=(recipe.recipeIngredient||[]).map(ing=>({name:ing,quantity:1,unit:'pi%C3%A8ce'}));const instructions=[];const steps=recipe.recipeInstructions||[];if(Array.isArray(steps)){steps.forEach(step=>{if(typeof step==='string'){instructions.push(step);}else if(step.text){instructions.push(step.text);}else if(step['@type']==='HowToStep'){instructions.push(step.text);}else if(Array.isArray(step.itemListElement)){step.itemListElement.forEach(sub=>{if(sub.text)instructions.push(sub.text);});}});}else if(typeof steps==='string'){instructions.push(steps);}let imageUrl='';if(recipe.image){imageUrl=Array.isArray(recipe.image)?recipe.image[0]:(typeof recipe.image==='object'?recipe.image.url:recipe.image);}const importData={title:recipe.name||document.title,description:recipe.description||'',prepTime:parseDuration(recipe.prepTime)||15,cookTime:parseDuration(recipe.cookTime)||30,servings:servings,ingredients:ingredients,instructions:instructions,imageUrl:imageUrl};const url='http://localhost:3000/recipe/new?import='%2BencodeURIComponent(JSON.stringify(importData));window.open(url,'_blank');})();"
+                style={{ fontWeight: 'bold', color: '#16a34a', textDecoration: 'underline', backgroundColor: '#dcfce7', padding: '0.2rem 0.5rem', borderRadius: '4px', cursor: 'grab', display: 'inline-block', margin: '0.25rem 0' }}
+                onClick={(e) => e.preventDefault()}
+              >
+                📥 Importer dans Notre Popote
+              </a><br />
+              2. Allez sur une recette sur <strong style={{ color: 'var(--color-text)' }}>Cookidoo.ch</strong> (ou Marmiton, Cookomix, NYT Cooking, etc.).<br />
+              3. Cliquez sur le favori. La recette s’ouvrira préremplie ici !
+            </div>
+            
+            <hr style={{ border: '0', borderTop: '1px solid var(--color-border)' }} />
+
+            <div className={styles.formGroup} style={{ marginBottom: 0 }}>
+              <label><strong style={{ color: 'var(--color-primary)' }}>Méthode 2 : Copier-coller du texte</strong></label>
+              <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', margin: '0.25rem 0' }}>
+                Copiez le texte complet de la page de la recette (Titre, Ingrédients, Étapes) et collez-le ci-dessous.
+              </p>
+              <textarea
+                rows={5}
+                placeholder="Ex:&#10;Titre de la recette&#10;Ingrédients&#10;400 g de spaghetti&#10;4 oeufs&#10;Préparation&#10;1. Faire cuire les pâtes..."
+                value={importText}
+                onChange={e => setImportText(e.target.value)}
+                style={{ fontFamily: 'monospace', fontSize: '0.9rem' }}
+              />
+              <Button type="button" onClick={handleTextImport} style={{ marginTop: '0.5rem' }} disabled={!importText.trim()}>
+                Analyser et Remplir
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
 
       <form onSubmit={handleSubmit}>
         {/* General Info */}
@@ -298,4 +402,95 @@ export default function NewRecipePage() {
       />
     </div>
   );
+}
+
+function normalizeUnit(unit: string): string {
+  const u = unit.toLowerCase();
+  if (u === 'g') return 'g';
+  if (u === 'kg') return 'kg';
+  if (u === 'ml') return 'ml';
+  if (u === 'l' || u === 'litre' || u === 'litres') return 'L';
+  if (u.includes('gousse')) return 'gousse';
+  if (u.includes('cuillère') && u.includes('soupe') || u === 'c.à.s') return 'c.à.s';
+  if (u.includes('cuillère') && u.includes('café') || u === 'c.à.c') return 'c.à.c';
+  if (u.includes('pincée')) return 'pincée';
+  if (u.includes('verre')) return 'verre';
+  if (u.includes('sachet')) return 'sachet';
+  return 'pièce';
+}
+
+function parseIngredientText(line: string) {
+  const trimmed = line.trim();
+  const qtyMatch = trimmed.match(/^(\d+(?:[.,]\d+)?)\s*(g|kg|ml|l|cl|pièce|gousse|gousses|c\.à\.s|c\.à\.c|cuillère|cuillères|sachet|sachets|verre|verres|pincée|pincées)?(?:\s+de\s+|\s+d'\s+|\s+)?(.*)/i);
+  
+  if (qtyMatch) {
+    const quantity = parseFloat(qtyMatch[1].replace(',', '.'));
+    const unit = qtyMatch[2] ? qtyMatch[2].toLowerCase().trim() : 'pièce';
+    const name = qtyMatch[3] ? qtyMatch[3].trim() : trimmed;
+    
+    return {
+      name: name.charAt(0).toUpperCase() + name.slice(1),
+      quantity,
+      unit: normalizeUnit(unit)
+    };
+  }
+  return {
+    name: trimmed,
+    quantity: 1,
+    unit: 'pièce'
+  };
+}
+
+function parseRecipeFromText(text: string) {
+  const lines = text.split('\n').map(l => l.trim()).filter(l => l !== '');
+  
+  let title = '';
+  const ingredients: { name: string; quantity: number; unit: string }[] = [];
+  const instructions: string[] = [];
+  let prepTime = 15;
+  let cookTime = 30;
+  let servings = 4;
+  
+  let currentSection: 'meta' | 'ingredients' | 'instructions' = 'meta';
+  
+  if (lines.length > 0) {
+    title = lines[0];
+  }
+  
+  for (let i = 1; i < lines.length; i++) {
+    const line = lines[i];
+    const lowerLine = line.toLowerCase();
+    
+    if (lowerLine.includes('ingrédient')) {
+      currentSection = 'ingredients';
+      continue;
+    } else if (lowerLine.includes('préparation') || lowerLine.includes('étape') || lowerLine.includes('instruction')) {
+      currentSection = 'instructions';
+      continue;
+    }
+    
+    if (currentSection === 'meta') {
+      if (lowerLine.includes('portion') || lowerLine.includes('personne') || lowerLine.includes('parts')) {
+        const match = line.match(/\d+/);
+        if (match) servings = parseInt(match[0]);
+      } else if (lowerLine.includes('préparation') && (lowerLine.includes('min') || lowerLine.includes('h'))) {
+        const match = line.match(/\d+/);
+        if (match) prepTime = parseInt(match[0]);
+      } else if ((lowerLine.includes('total') || lowerLine.includes('cuisson')) && (lowerLine.includes('min') || lowerLine.includes('h'))) {
+        const match = line.match(/\d+/);
+        if (match) cookTime = parseInt(match[0]);
+      }
+    }
+    else if (currentSection === 'ingredients') {
+      ingredients.push(parseIngredientText(line));
+    }
+    else if (currentSection === 'instructions') {
+      const cleanStep = line.replace(/^\d+[\s.:\-)]+/, '').trim();
+      if (cleanStep) {
+        instructions.push(cleanStep);
+      }
+    }
+  }
+  
+  return { title, ingredients, instructions, prepTime, cookTime, servings };
 }
