@@ -1,0 +1,402 @@
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--color-text);
+}
+
+.subtitle {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-top: 0.25rem;
+}
+
+.headerActions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.bringCard {
+  background-color: #fef3c7; /* Warm background for Bring! yellow/orange theme integration */
+  border: 1px solid #f59e0b;
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  margin-bottom: 2.5rem;
+  box-shadow: var(--shadow-sm);
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.bringHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.bringHeader h3 {
+  color: #b45309;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.disconnectBtn {
+  font-size: 0.85rem;
+  color: var(--color-danger);
+  font-weight: 500;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.bringInfo {
+  font-size: 0.85rem;
+  color: #92400e;
+  line-height: 1.5;
+  margin-bottom: 1.25rem;
+}
+
+.bringForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.inputRow {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.inputRow input {
+  flex: 1;
+  min-width: 180px;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid #d97706;
+  border-radius: var(--radius-md);
+  font-size: 0.95rem;
+  background-color: white;
+  color: var(--color-text);
+}
+
+.inputRow input:focus {
+  outline: none;
+  border-color: #b45309;
+  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2);
+}
+
+.listSelectorRow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.95rem;
+  color: #78350f;
+}
+
+.listSelectorRow select {
+  padding: 0.5rem 1rem;
+  border: 1px solid #d97706;
+  border-radius: var(--radius-md);
+  background-color: white;
+  font-size: 0.95rem;
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.mainGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.listContainer {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.addItemForm {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.itemNameInput {
+  flex: 1;
+  min-width: 250px;
+  padding: 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+}
+
+.qtyInput {
+  width: 80px;
+  padding: 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  text-align: center;
+}
+
+.unitInput {
+  width: 120px;
+  padding: 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+}
+
+.itemNameInput:focus,
+.qtyInput:focus,
+.unitInput:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(21, 128, 61, 0.1);
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  color: var(--color-text-muted);
+  text-align: center;
+  gap: 1rem;
+}
+
+.emptyState span {
+  font-size: 3rem;
+}
+
+.shoppingSections {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.listSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.sectionHeaderLine {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid var(--color-bg);
+  padding-bottom: 0.5rem;
+}
+
+.listSection h3 {
+  font-size: 1.1rem;
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.itemList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.itemRow {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  gap: 1rem;
+  transition: background-color 0.15s;
+}
+
+.itemRow:hover {
+  background-color: var(--color-bg);
+}
+
+.itemCheckbox {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: var(--color-primary);
+}
+
+.itemInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.itemName {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.itemSource {
+  font-size: 0.75rem;
+  color: var(--color-text-light);
+}
+
+.itemQuantityArea {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: white;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  padding: 0.25rem 0.5rem;
+}
+
+.itemQuantityArea button {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.itemQuantityArea button:hover {
+  background-color: var(--color-border);
+}
+
+.itemQtyValue {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text);
+  min-width: 60px;
+  text-align: center;
+}
+
+.deleteItemBtn {
+  color: var(--color-text-muted);
+  font-size: 1.1rem;
+  padding: 0.25rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.deleteItemBtn:hover {
+  color: var(--color-danger);
+  background-color: rgba(239, 68, 68, 0.05);
+}
+
+.rowChecked {
+  background-color: var(--color-bg);
+  border-color: transparent;
+}
+
+.toast {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background-color: var(--color-primary);
+  color: white;
+  padding: 1rem 1.5rem;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  z-index: 1000;
+  font-weight: 500;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .page {
+    padding: 1rem;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+
+  .headerActions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .inputRow {
+    flex-direction: column;
+  }
+
+  .inputRow input {
+    width: 100%;
+  }
+
+  .addItemForm {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .itemNameInput,
+  .qtyInput,
+  .unitInput {
+    width: 100%;
+  }
+
+  .itemRow {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .itemQuantityArea {
+    order: 3;
+    margin-left: 2rem;
+  }
+
+  .deleteItemBtn {
+    margin-left: auto;
+  }
+}

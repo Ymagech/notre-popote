@@ -41,3 +41,25 @@ export interface AppSettings {
   mealCategories: string[];
   originCategories: string[];
 }
+
+export interface ShoppingListItem {
+  id?: string;
+  name: string;
+  quantity: number;
+  unit: string;
+  checked: boolean;
+  recipeId?: string;
+  recipeTitle?: string;
+  createdAt?: unknown;
+}
+
+export interface CalendarEntry {
+  id?: string;
+  date: string; // YYYY-MM-DD
+  mealType: string;
+  recipeId: string;
+  recipeTitle: string;
+  recipeImageUrl?: string;
+  servings?: number;
+  createdAt?: unknown;
+}

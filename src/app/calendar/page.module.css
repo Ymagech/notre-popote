@@ -1,0 +1,334 @@
+.page {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--color-text);
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: var(--color-text-muted);
+  font-weight: 500;
+  margin-top: 0.25rem;
+}
+
+.headerActions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.navBtns {
+  display: flex;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface);
+  overflow: hidden;
+}
+
+.navBtn {
+  padding: 0.5rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--color-text);
+  border: none;
+  background: none;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.navBtn:not(:last-child) {
+  border-right: 1px solid var(--color-border);
+}
+
+.navBtn:hover {
+  background-color: var(--color-bg);
+}
+
+.calendarGrid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(180px, 1fr));
+  gap: 1rem;
+  overflow-x: auto;
+  padding-bottom: 1rem;
+}
+
+.dayCard {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  min-height: 500px;
+}
+
+.todayCard {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(21, 128, 61, 0.15), var(--shadow-md);
+  background-color: #f0fdf4;
+}
+
+.dayHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  border-bottom: 2px solid var(--color-bg);
+  padding-bottom: 0.5rem;
+}
+
+.dayName {
+  font-weight: bold;
+  font-size: 1.05rem;
+  color: var(--color-text);
+}
+
+.dayDate {
+  font-size: 0.85rem;
+  color: var(--color-text-light);
+  font-weight: 500;
+}
+
+.mealsList {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  flex-grow: 1;
+}
+
+.mealSlot {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.mealLabel {
+  font-size: 0.7rem;
+  font-weight: bold;
+  color: var(--color-text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.addSlotBtn {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text-light);
+  font-size: 0.85rem;
+  text-align: center;
+  background: none;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.addSlotBtn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background-color: rgba(21, 128, 61, 0.02);
+}
+
+.plannedCard {
+  position: relative;
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  box-shadow: var(--shadow-sm);
+  transition: border-color 0.15s;
+}
+
+.plannedCard:hover {
+  border-color: var(--color-text-muted);
+}
+
+.plannedImageWrapper {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  flex-shrink: 0;
+  background-color: var(--color-bg-alt);
+}
+
+.plannedInfo {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0; /* allows text truncation */
+}
+
+.plannedTitle {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text);
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.plannedTitle:hover {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+.plannedServings {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.removeSlotBtn {
+  color: var(--color-text-light);
+  font-size: 0.85rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.15rem;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+}
+
+.removeSlotBtn:hover {
+  color: var(--color-danger);
+  background-color: rgba(239, 68, 68, 0.05);
+}
+
+/* Modal specific styles */
+.modalRecipeList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-height: 400px;
+  overflow-y: auto;
+  margin-top: 1rem;
+  padding-right: 0.5rem;
+}
+
+.modalRecipeItem {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  gap: 1rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.modalRecipeItem:hover {
+  border-color: var(--color-primary);
+  background-color: rgba(21, 128, 61, 0.01);
+}
+
+.modalRecipeImage {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background-color: var(--color-bg-alt);
+}
+
+.modalPlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+}
+
+.modalRecipeInfo {
+  flex-grow: 1;
+}
+
+.modalRecipeTitle {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.modalRecipeMeta {
+  font-size: 0.75rem;
+  color: var(--color-text-light);
+  margin-top: 0.15rem;
+}
+
+.modalEmpty {
+  text-align: center;
+  color: var(--color-text-light);
+  padding: 2rem 0;
+  font-size: 0.95rem;
+}
+
+.loadingState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  color: var(--color-text-muted);
+  font-size: 1.1rem;
+}
+
+@media (max-width: 1200px) {
+  .calendarGrid {
+    grid-template-columns: repeat(4, minmax(200px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .page {
+    padding: 1rem;
+  }
+  
+  .header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+  
+  .headerActions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .navBtns {
+    width: 100%;
+  }
+
+  .navBtn {
+    flex: 1;
+    text-align: center;
+  }
+
+  .calendarGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .dayCard {
+    min-height: auto;
+  }
+}

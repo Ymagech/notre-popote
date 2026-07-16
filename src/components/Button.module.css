@@ -47,3 +47,18 @@
 .fullWidth {
   width: 100%;
 }
+
+.sm {
+  padding: 0.25rem 0.6rem;
+  font-size: 0.75rem;
+  border-radius: var(--radius-sm);
+}
+
+.md {
+  /* standard sizes from .btn default */
+}
+
+.lg {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+}
